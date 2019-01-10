@@ -31,12 +31,6 @@ export default {
     }
   },
   methods: {
-    onWindowResize () {
-      this.camera.aspect = window.innerWidth / window.innerHeight
-      this.camera.updateProjectionMatrix() // 更新相机投影矩阵
-      this.renderer.setSize(window.innerWidth, window.innerHeight)
-    },
-
     initRender () {
       this.renderer = new THREE.WebGLRenderer({
         antialias: true // 是否抗锯齿
@@ -60,7 +54,41 @@ export default {
     initModel () {
       this.modelLoader('file1.obj')
     },
+    modelLoader (file) {
+      if (this.loaderArr) {
+        for (let i = 0; i < this.loaderArr.length - 1; i++) {
+          this.loaderArr[i].geometry.dispose()// 清理内存
+          this.loaderArr[i].material.dispose()
+        }
+        this.loaderArr = null
+      }
+      this.scene.remove.apply(this.scene, this.scene.children)
+      new OBJLoader().load('/static/file1.obj', obj => {
+        this.loaderArr = obj.children
+        this.textureLoader(obj.children, this.imgt)
+        this.scene.add(obj)
+      })
+    },
+    textureLoader (obj, img) {
+      this.imgt = img
+      var textureLoader = new THREE.TextureLoader()
+      textureLoader.load(require('../assets/resources/' + img), texture => {
+        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
+        texture.minFilter = THREE.NearestFilter
+        texture.matrixAutoUpdate = false // 法向更新
+        texture.needsUpdate = true
+        this.material = new THREE.MeshBasicMaterial({
+          map: texture
+        })
+        obj.forEach(child => {
+          child.material = this.material
+          child.geometry.computeFaceNormals()
+          child.geometry.computeVertexNormals()
+        })
+      })
+    },
     initControls () {
+      // controls = new THREE.TrackballControls(this.camera)
       this.controls = new OrbitControls(this.camera)
       this.controls.rotateSpeed = 3 // 旋转速度
       this.controls.zoomSpeed = 3 // 缩放/移动速度
@@ -75,43 +103,10 @@ export default {
     animate () {
       this.renderer.render(this.scene, this.camera)
       this.stats.update()
+      // console.log(this.controls)
+      // this.controls.update();
       this.controls.update()
       requestAnimationFrame(this.animate)
-    },
-
-    textureLoader (obj, img) {
-      this.imgt = img
-      var textureLoader = new THREE.TextureLoader()
-      textureLoader.load(require('../assets/resources/' + img), (texture) => {
-        texture.wrapS = texture.wrapT = THREE.RepeatWrapping
-        texture.minFilter = THREE.NearestFilter
-        texture.matrixAutoUpdate = false // 法向更新
-        texture.needsUpdate = true
-        this.material = new THREE.MeshBasicMaterial({
-          map: texture
-        })
-        obj.forEach((child) => {
-          child.material = this.material
-          child.geometry.computeFaceNormals()
-          child.geometry.computeVertexNormals()
-        })
-      })
-    },
-    modelLoader (file) {
-      if (this.loaderArr) {
-        for (let i = 0; i < this.loaderArr.length - 1; i++) {
-          this.loaderArr[i].geometry.dispose()// 清理内存
-          this.loaderArr[i].material.dispose()
-        }
-        this.loaderArr = null
-      }
-      this.scene.remove.apply(this.scene, this.scene.children)
-      var objLoader = new OBJLoader()
-      objLoader.load(require('../assets/obj/' + file), (obj) => {
-        this.loaderArr = obj.children
-        this.textureLoader(obj.children, this.imgt)
-        this.scene.add(obj)
-      })
     },
 
     draw () {
@@ -126,9 +121,9 @@ export default {
     }
   },
   created () {
-    this.$nextTick(() => {
-      this.draw()
-    })
+    // this.$nextTick(() => {
+    this.draw()
+    // })
   }
 }
 </script>
