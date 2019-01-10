@@ -1,10 +1,10 @@
 <template>
   <div class="hello">
     <div class="btnSel">
-      <button id="btnA" @click="textureLoader(loaderArr,'a.jpg')">a.jpg</button>
-      <button id="btnB" @click="textureLoader(loaderArr,'b.jpg')">b.jpg</button>
-      <button id="btnC" @click="textureLoader(loaderArr,'c.jpg')">c.jpg</button>
-      <button id="btnG" @click="textureLoader(loaderArr,'d.jpg')">d.jpg</button>
+      <button id="btnA" @click="textureLoader('a.jpg')">a.jpg</button>
+      <button id="btnB" @click="textureLoader('b.jpg')">b.jpg</button>
+      <button id="btnC" @click="textureLoader('c.jpg')">c.jpg</button>
+      <button id="btnG" @click="textureLoader('d.jpg')">d.jpg</button>
       <button id="btnD" @click="modelLoader('file3.obj')">浴缸</button>
       <button id="btnE" @click="modelLoader('file2.obj')">模特1</button>
       <button id="btnF" @click="modelLoader('file1.obj')">模特2</button>
@@ -63,13 +63,13 @@ export default {
         this.loaderArr = null
       }
       this.scene.remove.apply(this.scene, this.scene.children)
-      new OBJLoader().load('/static/file1.obj', obj => {
+      new OBJLoader().load('/static/' + file, obj => {
         this.loaderArr = obj.children
-        this.textureLoader(obj.children, this.imgt)
+        this.textureLoader(this.imgt)
         this.scene.add(obj)
       })
     },
-    textureLoader (obj, img) {
+    textureLoader (img) {
       this.imgt = img
       var textureLoader = new THREE.TextureLoader()
       textureLoader.load(require('../assets/resources/' + img), texture => {
@@ -80,7 +80,7 @@ export default {
         this.material = new THREE.MeshBasicMaterial({
           map: texture
         })
-        obj.forEach(child => {
+        this.loaderArr.forEach(child => {
           child.material = this.material
           child.geometry.computeFaceNormals()
           child.geometry.computeVertexNormals()
