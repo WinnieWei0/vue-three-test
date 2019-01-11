@@ -474,12 +474,12 @@ THREE.OrbitControls = function (object, domElement) {
 
     rotateStart.set(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
   }
-  function handleTouchStartPan (event) {
-    // console.log( 'handleTouchStartRotate' );
+  // function handleTouchStartPan (event) {
+  //   // console.log( 'handleTouchStartRotate' );
 
-    // panStart.set(event.clientX, event.clientY)
-    panStart.set(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
-  }
+  //   // panStart.set(event.clientX, event.clientY)
+  //   panStart.set(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
+  // }
   function handleTouchStartDolly (event) {
     // console.log( 'handleTouchStartDolly' );
 
@@ -500,9 +500,14 @@ THREE.OrbitControls = function (object, domElement) {
     // }
   }
 
-  // function judgeVertical(){
-
-  // }
+  function judgeVertical (event) {
+    console.log(rotateStart, event)
+    if (Math.abs(event.touches[0].pageX - rotateStart.x) >= Math.abs(event.touches[0].pageY - rotateStart.y)) {
+      return true // 横
+    } else {
+      return false // 竖
+    }
+  }
 
   function handleTouchMoveRotate (event) {
     // console.log( 'handleTouchMoveRotate' );
@@ -530,11 +535,11 @@ THREE.OrbitControls = function (object, domElement) {
 
     panEnd.set(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
     // console.log(panEnd, panStart, scope.panSpeed)
-    panDelta.subVectors(panEnd, panStart).multiplyScalar(scope.panSpeed)
+    panDelta.subVectors(panEnd, rotateStart).multiplyScalar(scope.panSpeed)
     // console.log(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY, panDelta.x, panDelta.y)
     pan(panDelta.x, panDelta.y)
 
-    panStart.copy(panEnd)
+    rotateStart.copy(panEnd)
     scope.update()
     // }
   }
@@ -711,7 +716,7 @@ THREE.OrbitControls = function (object, domElement) {
         if (scope.enableRotate === false) return
 
         handleTouchStartRotate(event)
-        handleTouchStartPan(event)
+        // handleTouchStartPan(event)
 
         state = STATE.TOUCH_ROTATE
         state = STATE.TOUCH_PAN
@@ -749,10 +754,11 @@ THREE.OrbitControls = function (object, domElement) {
 
         if (scope.enableRotate === false && scope.enablePan === false) return
         if (state !== STATE.TOUCH_ROTATE && state !== STATE.TOUCH_PAN) return // is this needed?
-
-        handleTouchMoveRotate(event)
-        handleTouchMovePan(event)
-
+        if (judgeVertical(event)) {
+          handleTouchMoveRotate(event)
+        } else {
+          handleTouchMovePan(event)
+        }
         break
 
       case 2: // two-fingered touch: dolly-pan
