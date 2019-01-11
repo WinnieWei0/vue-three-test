@@ -63,7 +63,7 @@ export default {
         this.loaderArr = null
       }
       this.scene.remove.apply(this.scene, this.scene.children)
-      new OBJLoader().load('/static/' + file, obj => {
+      new OBJLoader().load('/static/obj/' + file, obj => {
         this.loaderArr = obj.children
         this.textureLoader(this.imgt)
         this.scene.add(obj)
