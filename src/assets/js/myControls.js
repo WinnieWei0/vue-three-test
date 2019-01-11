@@ -415,7 +415,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     panEnd.set(event.clientX, event.clientY)
 
-    console.log(panEnd, panStart, scope.panSpeed)
+    // console.log(panEnd, panStart, scope.panSpeed)
     panDelta.subVectors(panEnd, panStart).multiplyScalar(scope.panSpeed)
     // console.log(event.clientX, event.clientY, panDelta.x, panDelta.y)
     pan(panDelta.x, panDelta.y)
@@ -501,7 +501,7 @@ THREE.OrbitControls = function (object, domElement) {
   }
 
   function judgeVertical (event) {
-    console.log(rotateStart, event)
+    // console.log(rotateStart, event)
     if (Math.abs(event.touches[0].pageX - rotateStart.x) >= Math.abs(event.touches[0].pageY - rotateStart.y)) {
       return true // 横
     } else {
@@ -520,7 +520,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     rotateLeft(2 * Math.PI * rotateDelta.x / element.clientHeight) // yes, height
 
-    rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight)
+    // rotateUp(2 * Math.PI * rotateDelta.y / element.clientHeight)
 
     rotateStart.copy(rotateEnd)
 
