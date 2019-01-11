@@ -1,23 +1,25 @@
 <template>
   <div class="hello">
     <div class="btnSel">
-      <button id="btnA" @click="textureLoader('a.jpg')">a.jpg</button>
+      <!-- <button id="btnA" @click="textureLoader('a.jpg')">a.jpg</button>
       <button id="btnB" @click="textureLoader('b.jpg')">b.jpg</button>
       <button id="btnC" @click="textureLoader('c.jpg')">c.jpg</button>
       <button id="btnG" @click="textureLoader('d.jpg')">d.jpg</button>
       <button id="btnD" @click="modelLoader('file3.obj')">浴缸</button>
       <button id="btnE" @click="modelLoader('file2.obj')">模特1</button>
-      <button id="btnF" @click="modelLoader('file1.obj')">模特2</button>
+      <button id="btnF" @click="modelLoader('file1.obj')">模特2</button> -->
     </div>
   </div>
 </template>
 
 <script>
 import * as THREE from 'three'
-import OrbitControls from 'three-orbitcontrols'
+// import OrbitControls from 'three-orbitcontrols'
+import OrbitControls from '../assets/js/myControls.js'
 import {OBJLoader} from 'three-obj-mtl-loader'
 import Stats from 'stats-js'
 export default {
+  props: ['arrLoader'],
   data () {
     return {
       scene: null,
@@ -52,9 +54,15 @@ export default {
       this.scene.add(helper)
     },
     initModel () {
-      this.modelLoader('file1.obj')
+      this.arrLoader.map(val => {
+        // console.log(val, val.geomatry, val.material)
+        this.modelLoader(val.geomatry, val.material)
+      })
+      // this.modelLoader('file1.obj')
     },
-    modelLoader (file) {
+    modelLoader (geomatry, material) {
+      // console.log(geomatry, material)
+      // console.log(222222222222, this.arrLoader)
       if (this.loaderArr) {
         for (let i = 0; i < this.loaderArr.length - 1; i++) {
           this.loaderArr[i].geometry.dispose()// 清理内存
@@ -63,13 +71,14 @@ export default {
         this.loaderArr = null
       }
       this.scene.remove.apply(this.scene, this.scene.children)
-      new OBJLoader().load('/static/obj/' + file, obj => {
+      new OBJLoader().load('/static/obj/' + geomatry, obj => {
         this.loaderArr = obj.children
-        this.textureLoader(this.imgt)
+        this.textureLoader(material)
         this.scene.add(obj)
       })
     },
     textureLoader (img) {
+      // console.log(111111111111, this.arrLoader)
       this.imgt = img
       var textureLoader = new THREE.TextureLoader()
       textureLoader.load(require('../assets/resources/' + img), texture => {
@@ -90,9 +99,10 @@ export default {
     initControls () {
       // controls = new THREE.TrackballControls(this.camera)
       this.controls = new OrbitControls(this.camera)
-      this.controls.rotateSpeed = 3 // 旋转速度
-      this.controls.zoomSpeed = 3 // 缩放/移动速度
+      this.controls.rotateSpeed = 1 // 旋转速度
+      this.controls.zoomSpeed = 1 // 缩放/移动速度
       this.controls.panSpeed = 1 // 平移速度
+      // console.log(this.controls)
     },
     initStats () {
       this.stats = new Stats()
@@ -123,6 +133,14 @@ export default {
   created () {
     // this.$nextTick(() => {
     this.draw()
+    // window.onresize = (() => {
+    //   // console.log('onresize:' + that.mainHeight)
+    //   // that.mainHeight = document.body.clientHeight
+    //   this.camera.aspect = window.innerWidth / window.innerHeight
+    //   this.camera.updateProjectionMatrix() // 更新相机投影矩阵
+    //   this.renderer.setSize(window.innerWidth, window.innerHeight)
+    //   this.controls.handleResize()
+    // }, 400)
     // })
   }
 }
