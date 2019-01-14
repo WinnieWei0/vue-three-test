@@ -282,13 +282,13 @@ THREE.OrbitControls = function (object, domElement) {
     var v = new THREE.Vector3()
 
     return function panUp (distance, objectMatrix) {
-      if (scope.screenSpacePanning === true) {
-        v.setFromMatrixColumn(objectMatrix, 1)
-      } else {
-        v.setFromMatrixColumn(objectMatrix, 0)
-        v.crossVectors(scope.object.up, v)
-      }
-
+      // if (scope.screenSpacePanning === true) {
+      //   v.setFromMatrixColumn(objectMatrix, 1)
+      // } else {
+      //   v.setFromMatrixColumn(objectMatrix, 0)  // X轴平移
+      //   v.crossVectors(scope.object.up, v)
+      // }
+      v.setFromMatrixColumn(objectMatrix, 1) // Y轴平移
       v.multiplyScalar(distance)
 
       panOffset.add(v)
@@ -473,6 +473,7 @@ THREE.OrbitControls = function (object, domElement) {
     // console.log( 'handleTouchStartRotate' );
 
     rotateStart.set(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
+    // isMouseDown = true
   }
   // function handleTouchStartPan (event) {
   //   // console.log( 'handleTouchStartRotate' );
@@ -501,12 +502,25 @@ THREE.OrbitControls = function (object, domElement) {
   }
 
   function judgeVertical (event) {
-    // console.log(rotateStart, event)
-    if (Math.abs(event.touches[0].pageX - rotateStart.x) >= Math.abs(event.touches[0].pageY - rotateStart.y)) {
-      return true // 横
-    } else {
-      return false // 竖
+    console.log(rotateStart.x, rotateStart.y)
+    var angle = Math.atan2((event.touches[0].pageX - rotateStart.x) / (event.touches[0].pageY - rotateStart.y)) * 180 / Math.PI
+    if ((angle > -45 && angle < 45) || (angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135)) {
+      return true
+    } else if ((angle >= 45 && angle < 135) || (angle >= -135 && angle < -45)) {
+      return false
     }
+    // if (isMouseDown) {
+    //   isMouseDown = false
+    // if (Math.abs(event.touches[0].pageX - rotateStart.x) >= Math.abs(event.touches[0].pageY - rotateStart.y)) {
+    //   console.log(111111)
+    //   isMouseDown = true
+    //   return true // 横
+    // } else {
+    //   console.log(22222222)
+    //   isMouseDown = false
+    //   return false // 竖
+    // }
+    // }
   }
 
   function handleTouchMoveRotate (event) {
@@ -526,17 +540,17 @@ THREE.OrbitControls = function (object, domElement) {
 
     scope.update()
   }
+  // var isMouseDown = false
 
   function handleTouchMovePan (event) {
     // if (scope.enablePan) {
     // var x = 0.5 * (event.touches[ 0 ].pageX + event.touches[ 1 ].pageX)
     // var y = 0.5 * (event.touches[ 0 ].pageY + event.touches[ 1 ].pageY)
     // panEnd.set(x, y)
-
     panEnd.set(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
     // console.log(panEnd, panStart, scope.panSpeed)
     panDelta.subVectors(panEnd, rotateStart).multiplyScalar(scope.panSpeed)
-    // console.log(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY, panDelta.x, panDelta.y)
+    // console.log(panDelta, panDelta.x, panDelta.y)
     pan(panDelta.x, panDelta.y)
 
     rotateStart.copy(panEnd)
@@ -579,9 +593,7 @@ THREE.OrbitControls = function (object, domElement) {
   }
 
   function handleTouchEnd (event) {
-
-    // console.log( 'handleTouchEnd' );
-
+    // isMouseDown = false
   }
 
   //
@@ -754,9 +766,18 @@ THREE.OrbitControls = function (object, domElement) {
 
         if (scope.enableRotate === false && scope.enablePan === false) return
         if (state !== STATE.TOUCH_ROTATE && state !== STATE.TOUCH_PAN) return // is this needed?
+
         if (judgeVertical(event)) {
+          // if (!isMouseDown) {
+          //   console.log(333)
+          //   return
+          // }
           handleTouchMoveRotate(event)
         } else {
+          // if (isMouseDown) {
+          //   console.log(4444)
+          //   return
+          // }
           handleTouchMovePan(event)
         }
         break
