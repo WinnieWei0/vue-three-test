@@ -474,6 +474,7 @@ THREE.OrbitControls = function (object, domElement) {
 
     rotateStart.set(event.touches[ 0 ].pageX, event.touches[ 0 ].pageY)
     // isMouseDown = true
+    isMouseDown = 0
   }
   // function handleTouchStartPan (event) {
   //   // console.log( 'handleTouchStartRotate' );
@@ -501,26 +502,15 @@ THREE.OrbitControls = function (object, domElement) {
     // }
   }
 
+  var isMouseDown = 0
   function judgeVertical (event) {
-    console.log(rotateStart.x, rotateStart.y)
-    var angle = Math.atan2((event.touches[0].pageX - rotateStart.x) / (event.touches[0].pageY - rotateStart.y)) * 180 / Math.PI
-    if ((angle > -45 && angle < 45) || (angle >= 135 && angle <= 180) || (angle >= -180 && angle < -135)) {
-      return true
-    } else if ((angle >= 45 && angle < 135) || (angle >= -135 && angle < -45)) {
-      return false
+    if (isMouseDown === 0) {
+      if (Math.abs(event.touches[0].pageX - rotateStart.x) >= Math.abs(event.touches[0].pageY - rotateStart.y)) {
+        isMouseDown = 1// 横
+      } else {
+        isMouseDown = 2// 竖
+      }
     }
-    // if (isMouseDown) {
-    //   isMouseDown = false
-    // if (Math.abs(event.touches[0].pageX - rotateStart.x) >= Math.abs(event.touches[0].pageY - rotateStart.y)) {
-    //   console.log(111111)
-    //   isMouseDown = true
-    //   return true // 横
-    // } else {
-    //   console.log(22222222)
-    //   isMouseDown = false
-    //   return false // 竖
-    // }
-    // }
   }
 
   function handleTouchMoveRotate (event) {
@@ -540,7 +530,6 @@ THREE.OrbitControls = function (object, domElement) {
 
     scope.update()
   }
-  // var isMouseDown = false
 
   function handleTouchMovePan (event) {
     // if (scope.enablePan) {
@@ -766,18 +755,10 @@ THREE.OrbitControls = function (object, domElement) {
 
         if (scope.enableRotate === false && scope.enablePan === false) return
         if (state !== STATE.TOUCH_ROTATE && state !== STATE.TOUCH_PAN) return // is this needed?
-
-        if (judgeVertical(event)) {
-          // if (!isMouseDown) {
-          //   console.log(333)
-          //   return
-          // }
+        judgeVertical(event)
+        if (isMouseDown === 1) {
           handleTouchMoveRotate(event)
-        } else {
-          // if (isMouseDown) {
-          //   console.log(4444)
-          //   return
-          // }
+        } else if (isMouseDown === 2) {
           handleTouchMovePan(event)
         }
         break

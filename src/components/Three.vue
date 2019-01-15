@@ -45,7 +45,7 @@ export default {
     },
     initCamera () {
       this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1e10)
-      this.camera.position.set(0, 40, 50)
+      this.camera.position.set(0, 2000, 1000)
     },
     initScene () {
       this.scene = new THREE.Scene()
