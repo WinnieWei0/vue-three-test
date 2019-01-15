@@ -45,7 +45,7 @@ export default {
     },
     initCamera () {
       this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.01, 1e10)
-      this.camera.position.set(0, 2000, 1000)
+      this.camera.position.set(0, 1000, 3000)
     },
     initScene () {
       this.scene = new THREE.Scene()
@@ -73,6 +73,7 @@ export default {
       }
       this.scene.remove.apply(this.scene, this.scene.children)
       new OBJLoader().load('/static/obj/' + geomatry, obj => {
+        obj.position.y = -1000
         this.loaderArr = obj.children
         this.textureLoader(this.imgt)
         this.scene.add(obj)
