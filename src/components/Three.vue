@@ -1,13 +1,13 @@
 <template>
   <div class="hello">
     <div class="btnSel">
-      <button id="btnA" @click="textureLoader('a.jpg')">a.jpg</button>
+      <!-- <button id="btnA" @click="textureLoader('a.jpg')">a.jpg</button>
       <button id="btnB" @click="textureLoader('b.jpg')">b.jpg</button>
       <button id="btnC" @click="textureLoader('c.jpg')">c.jpg</button>
       <button id="btnG" @click="textureLoader('d.jpg')">d.jpg</button>
       <button id="btnD" @click="modelLoader('file3.obj')">浴缸</button>
       <button id="btnE" @click="modelLoader('file2.obj')">模特1</button>
-      <button id="btnF" @click="modelLoader('file1.obj')">模特2</button>
+      <button id="btnF" @click="modelLoader('file1.obj')">模特2</button> -->
     </div>
   </div>
 </template>
@@ -18,6 +18,7 @@ import OrbitControls from 'three-orbitcontrols'
 import {OBJLoader} from 'three-obj-mtl-loader'
 import Stats from 'stats-js'
 export default {
+  props: ['arrLoader'],
   data () {
     return {
       scene: null,
@@ -52,7 +53,8 @@ export default {
       this.scene.add(helper)
     },
     initModel () {
-      this.modelLoader('file1.obj')
+      // this.modelLoader('file1.obj')
+      this.modelLoader(this.arrLoader[0].geomatry)
     },
     modelLoader (file) {
       if (this.loaderArr) {
@@ -65,12 +67,12 @@ export default {
       this.scene.remove.apply(this.scene, this.scene.children)
       new OBJLoader().load('/static/' + file, obj => {
         this.loaderArr = obj.children
-        this.textureLoader(this.imgt)
+        this.textureLoader(this.arrLoader[0].matrial)
         this.scene.add(obj)
       })
     },
     textureLoader (img) {
-      this.imgt = img
+      // this.imgt = img
       var textureLoader = new THREE.TextureLoader()
       textureLoader.load(require('../assets/resources/' + img), texture => {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping

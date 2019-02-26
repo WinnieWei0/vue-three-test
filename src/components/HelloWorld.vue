@@ -1,13 +1,13 @@
 <template>
   <div class="hello">
-      <!--<button id="btnA" @click="textureLoader('a.jpg')">a.jpg</button>
+      <button id="btnA" @click="textureLoader('a.jpg')">a.jpg</button>
       <button id="btnB" @click="textureLoader('b.jpg')">b.jpg</button>
       <button id="btnC" @click="textureLoader('c.jpg')">c.jpg</button>
       <button id="btnG" @click="textureLoader('d.jpg')">d.jpg</button>
       <button id="btnD" @click="modelLoader('file3.obj')">浴缸</button>
       <button id="btnE" @click="modelLoader('file2.obj')">模特1</button>
-      <button id="btnF" @click="modelLoader('file1.obj')">模特2</button>-->
-<three></three>
+      <button id="btnF" @click="modelLoader('file1.obj')">模特2</button>
+<three :arrLoader="arrLoader"></three>
   </div>
 </template>
 
@@ -24,8 +24,8 @@ export default {
           matrial: 'a.jpg'
         }
       ]
-      // geomatry: null,
-      // matrial: null
+      // matrial: 'a.jpg',
+      // geomatry: 'file1.obj'
     }
   },
   methods: {
@@ -34,6 +34,7 @@ export default {
       this.arrLoader[0].matrial = val
     },
     modelLoader (val) {
+      // this.geomatry = val
       this.arrLoader[0].geomatry = val
     }
   }
