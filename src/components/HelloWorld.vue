@@ -23,7 +23,8 @@ export default {
       arrLoader: [
         {
           geomatry: 'file1.obj',
-          material: 'a.jpg'
+          material: 'a.jpg',
+          position: [100, 100, 100]
         }
       ]
     }
@@ -31,11 +32,13 @@ export default {
   methods: {
     textureLoader (val) {
       this.arrLoader[0].material = val
+      this.arrLoader[0].position = [2000, 200, 200]
       this.$refs.child.textureLoader(val)
     },
     modelLoader (val) {
       this.arrLoader[0].geomatry = val
       this.$refs.child.modelLoader(val)
+      this.arrLoader[0].position = [300, 300, 300]
     }
   }
 }
@@ -52,7 +55,7 @@ export default {
 .btn{
   width: 265px;
   position: absolute;
-  top: 0;
+  bottom: 0;
   right: 0;
 }
 .btn button{

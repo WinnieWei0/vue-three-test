@@ -54,6 +54,7 @@ export default {
         }
         this.loaderArr = null
       }
+      this.camera.position.set(this.arrLoader[0].position[0], this.arrLoader[0].position[1], this.arrLoader[0].position[2])
       this.scene.remove.apply(this.scene, this.scene.children)
       new OBJLoader().load('/static/obj/' + geomatry, obj => {
         obj.position.y = -1000
@@ -63,6 +64,7 @@ export default {
       })
     },
     textureLoader (img) {
+      this.camera.position.set(this.arrLoader[0].position[0], this.arrLoader[0].position[1], this.arrLoader[0].position[2])
       var textureLoader = new THREE.TextureLoader()
       textureLoader.load(require('../assets/resources/' + img), texture => {
         texture.wrapS = texture.wrapT = THREE.RepeatWrapping
